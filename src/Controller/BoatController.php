@@ -47,41 +47,45 @@ class BoatController extends AbstractController
 
         if ($request->isMethod('POST') && in_array($request->request->get('direction'), $directions, true)) {
             $direction = $request->request->get('direction');
-            if ($mapManager->tileExists($x, $y)) {
-                switch ($direction) {
-                    case 'S':
-                        if ($mapManager->tileExists($x, $y + 1)) {
-                            $boat->setCoordY($y + 1);
-                        } else {
-                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
-                        }
-                        break;
-                    case 'N':
-                        if ($mapManager->tileExists($x, $y - 1)) {
-                            $boat->setCoordY($y - 1);
-                        } else {
-                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
-                        }
-                        break;
-                    case 'W':
-                        if ($mapManager->tileExists($x - 1, $y)) {
-                            $boat->setCoordX($x - 1);
-                        } else {
-                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
-                        }
-                        break;
-                    case 'E':
-                        if ($mapManager->tileExists($x + 1, $y)) {
-                            $boat->setCoordX($x + 1);
-                        } else {
-                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
-                        }
-                        break;
-                }
+            switch ($direction) {
+                case 'S':
+                    if ($mapManager->tileExists($x, $y + 1)) {
+                        $boat->setCoordY($y + 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'N':
+                    if ($mapManager->tileExists($x, $y - 1)) {
+                        $boat->setCoordY($y - 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'W':
+                    if ($mapManager->tileExists($x - 1, $y)) {
+                        $boat->setCoordX($x - 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'E':
+                    if ($mapManager->tileExists($x + 1, $y)) {
+                        $boat->setCoordX($x + 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
             }
         }
 
-            $em->flush();
+        $em->flush();
+
+//        dd($mapManager->checkTreasure($boat));
+
+        if($mapManager->checkTreasure($boat) === true) {
+            $this->addFlash('success', 'Congrats ! You have found the lost treasure of Rackham the Red !');
+        }
 
         return $this->redirectToRoute('map');
     }
