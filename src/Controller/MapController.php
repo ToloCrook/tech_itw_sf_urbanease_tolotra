@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\TileRepository;
 use App\Service\MapManager;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ class MapController extends AbstractController
     /**
      * @Route("/map", name="map")
      */
-    public function displayMap(BoatRepository $boatRepository, MapManager $mapManager) :Response
+    public function displayMap(BoatRepository $boatRepository) :Response
     {
         $em = $this->getDoctrine()->getManager();
         $tiles = $em->getRepository(Tile::class)->findAll();
@@ -27,10 +27,7 @@ class MapController extends AbstractController
 
         $boat = $boatRepository->findOneBy([]);
 
-        $currentTileX = $boat->getCoordX();
-        $currentTileY = $boat->getCoordY();
-
-        $currentTile = $em->getRepository(Tile::class)->findOneBy(['coordX' => $currentTileX, 'coordY' => $currentTileY]);
+        $currentTile = $em->getRepository(Tile::class)->findOneBy(['coordX' => $boat->getCoordX(), 'coordY' => $boat->getCoordY()]);
 
 //        Setting default value of 'direction' for the BoatController's route parameter
         $direction = 'N';
@@ -48,7 +45,7 @@ class MapController extends AbstractController
     /**
      * @Route("/start", name="start")
      */
-    public function start(BoatRepository $boatRepository, EntityManagerInterface $em, MapManager $mapManager)
+    public function start(BoatRepository $boatRepository, TileRepository $tileRepository, EntityManagerInterface $em, MapManager $mapManager)
     {
 //        Reset boat's coordinates to 0
         $boat = $boatRepository->findOneBy([]);
@@ -57,7 +54,7 @@ class MapController extends AbstractController
         $boat->setCoordX(0);
 
 //        Reset tile's treasure to 0 and set a new one
-        $tiles = $em->getRepository(Tile::class)->findBy(['type' => 'island']);
+        $tiles = $tileRepository->findBy(['type' => 'island']);
 
         foreach ($tiles as $tile) {
             $tile->setHasTreasure(false);

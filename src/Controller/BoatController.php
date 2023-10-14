@@ -37,48 +37,57 @@ class BoatController extends AbstractController
      * Move the boat to coord N, E, S, W
      * @Route("/direction/{direction}", name="directBoat", requirements={"direction" = "[NSEW]"})
      */
-    public function moveDirection(string $direction, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
+    public function moveDirection(BoatRepository $boatRepository, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
     {
 //        Retrieve boat's coordinates
-        $boat = $em->getRepository(Boat::class)->findOneBy([]);
+        $boat = $boatRepository->findOneBy([]);
         $x = $boat->getCoordX();
         $y = $boat->getCoordY();
 
 //        Setting allowed directions in an array to add additional verification
         $directions = ['S', 'W', 'E', 'N'];
 
-//        Verify form's method, allowed directions, and run algorithm depending on the specified direction. Display appropriate flash message.
-        if ($request->isMethod('POST') && in_array($request->request->get('direction'), $directions, true)) {
-            $direction = $request->request->get('direction');
-            switch ($direction) {
-                case 'S':
-                    if ($mapManager->tileExists($x, $y + 1)) {
-                        $boat->setCoordY($y + 1);
-                    } else {
-                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+//        Verify form's method, request, allowed directions, and run algorithm depending on the specified direction. Display appropriate flash message.
+        if ($request->isMethod('POST')) {
+            if (!$request->request->get('direction') || empty($request->request->get('direction'))) {
+                $this->addFlash('warning', "It seems Jack's compass is broken... Please try to navigate again.");
+
+                return $this->redirectToRoute('map');
+            } else {
+                $direction = $request->request->get('direction');
+
+                if (in_array($direction, $directions, true)) {
+                    switch ($direction) {
+                        case 'S':
+                            if ($mapManager->tileExists($x, $y + 1)) {
+                                $boat->setCoordY($y + 1);
+                            } else {
+                                $this->addFlash('warning', 'Do you want Jack to drown...?');
+                            }
+                            break;
+                        case 'N':
+                            if ($mapManager->tileExists($x, $y - 1)) {
+                                $boat->setCoordY($y - 1);
+                            } else {
+                                $this->addFlash('warning', 'Do you want Jack to drown...?');
+                            }
+                            break;
+                        case 'W':
+                            if ($mapManager->tileExists($x - 1, $y)) {
+                                $boat->setCoordX($x - 1);
+                            } else {
+                                $this->addFlash('warning', 'Do you want Jack to drown...?');
+                            }
+                            break;
+                        case 'E':
+                            if ($mapManager->tileExists($x + 1, $y)) {
+                                $boat->setCoordX($x + 1);
+                            } else {
+                                $this->addFlash('warning', 'Do you want Jack to drown...?');
+                            }
+                            break;
                     }
-                    break;
-                case 'N':
-                    if ($mapManager->tileExists($x, $y - 1)) {
-                        $boat->setCoordY($y - 1);
-                    } else {
-                        $this->addFlash('warning', 'Do you want Jack to drown...?');
-                    }
-                    break;
-                case 'W':
-                    if ($mapManager->tileExists($x - 1, $y)) {
-                        $boat->setCoordX($x - 1);
-                    } else {
-                        $this->addFlash('warning', 'Do you want Jack to drown...?');
-                    }
-                    break;
-                case 'E':
-                    if ($mapManager->tileExists($x + 1, $y)) {
-                        $boat->setCoordX($x + 1);
-                    } else {
-                        $this->addFlash('warning', 'Do you want Jack to drown...?');
-                    }
-                    break;
+                }
             }
         }
 
@@ -86,7 +95,7 @@ class BoatController extends AbstractController
 
 
 //        Check island's treasure and display appropriate flash message if found
-        if($mapManager->checkTreasure($boat) === true) {
+        if ($mapManager->checkTreasure($boat) === true) {
             $this->addFlash('success', 'Congrats ! You have found the lost treasure of Rackham the Red !');
         }
 
@@ -97,7 +106,8 @@ class BoatController extends AbstractController
     /**
      * @Route("/", name="boat_index", methods="GET")
      */
-    public function index(BoatRepository $boatRepository): Response
+    public
+    function index(BoatRepository $boatRepository): Response
     {
         return $this->render('boat/index.html.twig', ['boats' => $boatRepository->findAll()]);
     }
@@ -105,7 +115,8 @@ class BoatController extends AbstractController
     /**
      * @Route("/new", name="boat_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
+    public
+    function new(Request $request): Response
     {
         $boat = new Boat();
         $form = $this->createForm(BoatType::class, $boat);

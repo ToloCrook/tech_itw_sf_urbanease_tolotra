@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Boat;
 use App\Entity\Tile;
-use App\Repository\BoatRepository;
 use App\Repository\TileRepository;
 
 class MapManager
@@ -39,10 +38,7 @@ class MapManager
 
     public function checkTreasure(Boat $boat): bool
     {
-        $boatX = $boat->getCoordX();
-        $boatY = $boat->getCoordY();
-
-        $tile = $this->tileRepository->findOneBy(['coordX' => $boatX, 'coordY' => $boatY]);
+        $tile = $this->tileRepository->findOneBy(['coordX' => $boat->getCoordX(), 'coordY' => $boat->getCoordY()]);
 
         if (empty($tile) || $tile->getHasTreasure() === false) {
             return false;
