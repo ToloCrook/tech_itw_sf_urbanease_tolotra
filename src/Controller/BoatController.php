@@ -39,12 +39,15 @@ class BoatController extends AbstractController
      */
     public function moveDirection(string $direction, BoatRepository $boatRepository, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
     {
+//        Retrieve boat's coordinates
         $boat = $boatRepository->findOneBy([]);
         $x = $boat->getCoordX();
         $y = $boat->getCoordY();
 
+//        Setting allowed directions in an array to add additional verification
         $directions = ['S', 'W', 'E', 'N'];
 
+//        Verify form's method, allowed directions, and run algorithm depending on the specified direction. Display appropriate flash message.
         if ($request->isMethod('POST') && in_array($request->request->get('direction'), $directions, true)) {
             $direction = $request->request->get('direction');
             switch ($direction) {
@@ -81,8 +84,8 @@ class BoatController extends AbstractController
 
         $em->flush();
 
-//        dd($mapManager->checkTreasure($boat));
 
+//        Check island's treasure and display appropriate flash message if found
         if($mapManager->checkTreasure($boat) === true) {
             $this->addFlash('success', 'Congrats ! You have found the lost treasure of Rackham the Red !');
         }

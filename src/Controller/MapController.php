@@ -32,6 +32,7 @@ class MapController extends AbstractController
 
         $currentTile = $em->getRepository(Tile::class)->findOneBy(['coordX' => $currentTileX, 'coordY' => $currentTileY]);
 
+//        Setting default value of 'direction' for the BoatController's route parameter
         $direction = 'N';
 
         $em->flush();
@@ -51,11 +52,13 @@ class MapController extends AbstractController
      */
     public function start(BoatRepository $boatRepository, EntityManagerInterface $em, MapManager $mapManager)
     {
+//        Resest boat's coordinates to 0
         $boat = $boatRepository->findOneBy([]);
 
         $boat->setCoordY(0);
         $boat->setCoordX(0);
 
+//        Reset tile's treasure to 0 and set a new one
         $tiles = $em->getRepository(Tile::class)->findBy(['type' => 'island']);
 
         foreach ($tiles as $tile) {

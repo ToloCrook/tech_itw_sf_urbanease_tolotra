@@ -6,17 +6,14 @@ use App\Entity\Boat;
 use App\Entity\Tile;
 use App\Repository\BoatRepository;
 use App\Repository\TileRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class MapManager
 {
     private TileRepository $tileRepository;
-    private BoatRepository $boatRepository;
 
-    public function __construct(TileRepository $tileRepository, BoatRepository $boatRepository)
+    public function __construct(TileRepository $tileRepository)
     {
         $this->tileRepository = $tileRepository;
-        $this->boatRepository = $boatRepository;
     }
 
     public function tileExists(int $x, int $y): bool
@@ -46,8 +43,6 @@ class MapManager
         $boatY = $boat->getCoordY();
 
         $tile = $this->tileRepository->findOneBy(['coordX' => $boatX, 'coordY' => $boatY]);
-
-//        dd($boat, $tile);
 
         if (empty($tile) || $tile->getHasTreasure() === false) {
             return false;
