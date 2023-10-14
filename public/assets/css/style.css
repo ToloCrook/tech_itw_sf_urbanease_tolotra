@@ -47,16 +47,17 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 .instructions {
-    background-color:rgba(0,0,0,0.8);
-    padding:1em;
-    padding-left:3em;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 1em;
+    padding-left: 3em;
     color: white;
 }
-.instructions >li {
-    padding-top:0.5em;
-    padding-bottom:0.5em;
 
-    border-bottom:1px solid white;
+.instructions > li {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+
+    border-bottom: 1px solid white;
 }
 
 .instructions > li::first-letter {
@@ -80,8 +81,21 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: Caribbean;
 
 }
+
 blockquote {
     font-style: italic;
-    margin-top:0.5em;
+    margin-top: 0.5em;
+}
+
+.navigation-commands {
+    display: flex;
+    flex-direction: column;
+    width: 12%;
+    margin: auto;
+}
+
+.navigation-east-west {
+    display: flex;
+    justify-content: space-evenly;
 }
 

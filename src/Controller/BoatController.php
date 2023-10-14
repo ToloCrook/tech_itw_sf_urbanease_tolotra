@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Boat;
 use App\Form\BoatType;
 use App\Repository\BoatRepository;
+use App\Service\MapManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,13 +22,73 @@ class BoatController extends AbstractController
      * Move the boat to coord x,y
      * @Route("/move/{x}/{y}", name="moveBoat", requirements={"x"="\d+", "y"="\d+"}))
      */
-    public function moveBoat(int $x, int $y, BoatRepository $boatRepository, EntityManagerInterface $em) :Response
+    public function moveBoat(int $x, int $y, BoatRepository $boatRepository, EntityManagerInterface $em): Response
     {
         $boat = $boatRepository->findOneBy([]);
         $boat->setCoordX($x);
         $boat->setCoordY($y);
 
         $em->flush();
+
+        return $this->redirectToRoute('map');
+    }
+
+    /**
+     * Move the boat to coord N, E, S, W
+     * @Route("/direction/{direction}", name="directBoat", requirements={"direction" = "[NSEW]"})
+     */
+    public function moveDirection(string $direction, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
+    {
+//        Retrieve boat's coordinates
+        $boat = $em->getRepository(Boat::class)->findOneBy([]);
+        $x = $boat->getCoordX();
+        $y = $boat->getCoordY();
+
+//        Setting allowed directions in an array to add additional verification
+        $directions = ['S', 'W', 'E', 'N'];
+
+//        Verify form's method, allowed directions, and run algorithm depending on the specified direction. Display appropriate flash message.
+        if ($request->isMethod('POST') && in_array($request->request->get('direction'), $directions, true)) {
+            $direction = $request->request->get('direction');
+            switch ($direction) {
+                case 'S':
+                    if ($mapManager->tileExists($x, $y + 1)) {
+                        $boat->setCoordY($y + 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'N':
+                    if ($mapManager->tileExists($x, $y - 1)) {
+                        $boat->setCoordY($y - 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'W':
+                    if ($mapManager->tileExists($x - 1, $y)) {
+                        $boat->setCoordX($x - 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+                case 'E':
+                    if ($mapManager->tileExists($x + 1, $y)) {
+                        $boat->setCoordX($x + 1);
+                    } else {
+                        $this->addFlash('warning', 'Do you want Jack to drown...?');
+                    }
+                    break;
+            }
+        }
+
+        $em->flush();
+
+
+//        Check island's treasure and display appropriate flash message if found
+        if($mapManager->checkTreasure($boat) === true) {
+            $this->addFlash('success', 'Congrats ! You have found the lost treasure of Rackham the Red !');
+        }
 
         return $this->redirectToRoute('map');
     }
