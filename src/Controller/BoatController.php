@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Boat;
 use App\Form\BoatType;
 use App\Repository\BoatRepository;
+use App\Service\MapManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,13 +22,66 @@ class BoatController extends AbstractController
      * Move the boat to coord x,y
      * @Route("/move/{x}/{y}", name="moveBoat", requirements={"x"="\d+", "y"="\d+"}))
      */
-    public function moveBoat(int $x, int $y, BoatRepository $boatRepository, EntityManagerInterface $em) :Response
+    public function moveBoat(int $x, int $y, BoatRepository $boatRepository, EntityManagerInterface $em): Response
     {
         $boat = $boatRepository->findOneBy([]);
         $boat->setCoordX($x);
         $boat->setCoordY($y);
 
         $em->flush();
+
+        return $this->redirectToRoute('map');
+    }
+
+    /**
+     * Move the boat to coord N, E, S, W
+     * @Route("/direction/{direction}", name="directBoat", requirements={"direction" = "[NSEW]"})
+     */
+    public function moveDirection(string $direction, BoatRepository $boatRepository, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
+    {
+        $boat = $boatRepository->findOneBy([]);
+        $x = $boat->getCoordX();
+        $y = $boat->getCoordY();
+
+        $directions = ['S', 'W', 'E', 'N'];
+
+        if ($request->isMethod('POST') && in_array($request->request->get('direction'), $directions, true)) {
+            $direction = $request->request->get('direction');
+            if ($mapManager->tileExists($x, $y)) {
+                switch ($direction) {
+                    case 'S':
+                        if ($mapManager->tileExists($x, $y + 1)) {
+                            $boat->setCoordY($y + 1);
+                        } else {
+                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
+                        }
+                        break;
+                    case 'N':
+                        if ($mapManager->tileExists($x, $y - 1)) {
+                            $boat->setCoordY($y - 1);
+                        } else {
+                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
+                        }
+                        break;
+                    case 'W':
+                        if ($mapManager->tileExists($x - 1, $y)) {
+                            $boat->setCoordX($x - 1);
+                        } else {
+                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
+                        }
+                        break;
+                    case 'E':
+                        if ($mapManager->tileExists($x + 1, $y)) {
+                            $boat->setCoordX($x + 1);
+                        } else {
+                            $this->addFlash('Warning', 'Do you want Jack to drown...?');
+                        }
+                        break;
+                }
+            }
+        }
+
+            $em->flush();
 
         return $this->redirectToRoute('map');
     }

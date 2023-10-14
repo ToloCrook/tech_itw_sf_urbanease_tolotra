@@ -33,7 +33,7 @@
             <div class="col-sm-12">
                 {% for label, messages in app.flashes %}
                     {% for message in messages %}
-                        <div class="alert alert-{{ label }}">
+                        <div class="alert alert-{{ label }}" style="background-color: yellow; font-weight: bold; text-align: center;">
                             {{ message }}
                         </div>
                     {% endfor %}

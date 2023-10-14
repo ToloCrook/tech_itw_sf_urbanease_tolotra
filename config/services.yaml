@@ -7,6 +7,9 @@ parameters:
     locale: 'en'
 
 services:
+    App\Service\MapManager:
+        arguments:
+            $tileRepository: '@App\Repository\TileRepository'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

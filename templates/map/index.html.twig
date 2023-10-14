@@ -11,15 +11,18 @@
             <div class="col-10">
                 <div class="map">
                     {% if map is empty %}
-                        <div class="alert alert-warning">You are still on the firm ground, you have to load fixtures first !</div>
+                        <div class="alert alert-warning">You are still on the firm ground, you have to load fixtures
+                            first !
+                        </div>
                     {% endif %}
                     {% for y in 0..6 %}
                         <div class="row">
                             {% for x in 0..12 %}
                                 {% if map[x][y] is defined %}
                                     <div class="tile col-1 {{ map[x][y].type }}">
-                                        <div class="tile-name">{{ map[x][y].name ?? ' '}}</div>
-                                        <div class="tile-name coords">{{ map[x][y].coordX }},{{ map[x][y].coordY }}</div>
+                                        <div class="tile-name">{{ map[x][y].name ?? ' ' }}</div>
+                                        <div class="tile-name coords">{{ map[x][y].coordX }}
+                                            ,{{ map[x][y].coordY }}</div>
                                         {% if boat.coordX == x and boat.coordY == y %}
                                             <img class="boat img-fluid" src="{{ asset('assets/images/boat.png') }}"
                                                  alt="boat"/>
@@ -39,6 +42,12 @@
                 <div class="navigation">
                     <h2>Navigation</h2>
                     {# Add here N/S/E/W buttons #}
+                    <form method="post" action="{{ path('directBoat', {'direction': direction}) }}">
+                        <button type="submit" name="direction" value="N">N</button>
+                        <button type="submit" name="direction" value="E">E</button>
+                        <button type="submit" name="direction" value="S">S</button>
+                        <button type="submit" name="direction" value="W">W</button>
+                    </form>
                 </div>
             </div>
         </div>
