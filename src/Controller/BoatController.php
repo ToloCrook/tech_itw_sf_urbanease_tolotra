@@ -37,10 +37,10 @@ class BoatController extends AbstractController
      * Move the boat to coord N, E, S, W
      * @Route("/direction/{direction}", name="directBoat", requirements={"direction" = "[NSEW]"})
      */
-    public function moveDirection(string $direction, BoatRepository $boatRepository, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
+    public function moveDirection(string $direction, EntityManagerInterface $em, Request $request, MapManager $mapManager): Response
     {
 //        Retrieve boat's coordinates
-        $boat = $boatRepository->findOneBy([]);
+        $boat = $em->getRepository(Boat::class)->findOneBy([]);
         $x = $boat->getCoordX();
         $y = $boat->getCoordY();
 

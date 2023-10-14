@@ -37,8 +37,6 @@ class MapController extends AbstractController
 
         $em->flush();
 
-        $mapManager->getRandomIsland();
-
         return $this->render('map/index.html.twig', [
             'map'  => $map ?? [],
             'boat' => $boat,
@@ -52,7 +50,7 @@ class MapController extends AbstractController
      */
     public function start(BoatRepository $boatRepository, EntityManagerInterface $em, MapManager $mapManager)
     {
-//        Resest boat's coordinates to 0
+//        Reset boat's coordinates to 0
         $boat = $boatRepository->findOneBy([]);
 
         $boat->setCoordY(0);
