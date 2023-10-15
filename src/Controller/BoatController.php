@@ -44,19 +44,25 @@ class BoatController extends AbstractController
         $x = $boat->getCoordX();
         $y = $boat->getCoordY();
 
-//        Setting allowed directions in an array to add additional verification
+//        Setting allowed directions in an array to add additional verification other than regex
         $directions = ['S', 'W', 'E', 'N'];
 
-//        Verify form's method, request, allowed directions, and run algorithm depending on the specified direction. Display appropriate flash message.
+//        Verify form's method
         if ($request->isMethod('POST')) {
-            if (!$request->request->get('direction') || empty($request->request->get('direction'))) {
+//            Verify request is set and not empty
+            if (empty($request->request->get('direction'))) {
                 $this->addFlash('warning', "It seems Jack's compass is broken... Please try to navigate again.");
 
                 return $this->redirectToRoute('map');
             } else {
+//                Set request as $direction and verify allowed directions
                 $direction = $request->request->get('direction');
+                if (!in_array($direction, $directions, true)) {
+                    $this->addFlash('warning', "Please specify if you want to move South (S), North (N), East (E) or West (W).");
 
-                if (in_array($direction, $directions, true)) {
+                    return $this->redirectToRoute('map');
+                } else {
+//                     If all verifications passed, run algorithm depending on the specified direction. Display appropriate flash message.
                     switch ($direction) {
                         case 'S':
                             if ($mapManager->tileExists($x, $y + 1)) {
@@ -92,7 +98,6 @@ class BoatController extends AbstractController
         }
 
         $em->flush();
-
 
 //        Check island's treasure and display appropriate flash message if found
         if ($mapManager->checkTreasure($boat) === true) {

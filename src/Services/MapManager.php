@@ -19,11 +19,11 @@ class MapManager
     {
         $tile = $this->tileRepository->findOneBy(['coordX' => $x, 'coordY' => $y]);
 
-        if (!empty($tile)) {
-            return true;
-        } else {
+        if (empty($tile)) {
             return false;
         }
+
+        return true;
     }
 
     public function getRandomIsland(): Tile
@@ -42,9 +42,8 @@ class MapManager
 
         if (empty($tile) || $tile->getHasTreasure() === false) {
             return false;
-        } else {
-            return true;
         }
 
+        return true;
     }
 }

@@ -47,7 +47,7 @@ class MapController extends AbstractController
      */
     public function start(BoatRepository $boatRepository, TileRepository $tileRepository, EntityManagerInterface $em, MapManager $mapManager)
     {
-//        Reset boat's coordinates to 0
+//        Reset boat's coordinates to 0.0
         $boat = $boatRepository->findOneBy([]);
 
         $boat->setCoordY(0);
@@ -55,7 +55,6 @@ class MapController extends AbstractController
 
 //        Reset tile's treasure to 0 and set a new one
         $tiles = $tileRepository->findBy(['type' => 'island']);
-
         foreach ($tiles as $tile) {
             $tile->setHasTreasure(false);
         }
