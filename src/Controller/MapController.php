@@ -30,7 +30,7 @@ class MapController extends AbstractController
         $currentTile = $em->getRepository(Tile::class)->findOneBy(['coordX' => $boat->getCoordX(), 'coordY' => $boat->getCoordY()]);
 
 //        Setting default value of 'direction' for the BoatController's route parameter
-        $direction = 'N';
+//        $direction = 'N';
 
         $em->flush();
 
@@ -38,7 +38,7 @@ class MapController extends AbstractController
             'map'  => $map ?? [],
             'boat' => $boat,
             'currentTile' => $currentTile,
-            'direction' => $direction
+//            'direction' => $direction
         ]);
     }
 

@@ -54,21 +54,18 @@
                 <div class="navigation">
                     <h2>Navigation</h2>
                     {# Add here N/S/E/W buttons #}
-                    <form method="post" action="{{ path('directBoat', {'direction': direction}) }}">
                         <div class="navigation-commands">
-                            <button type="submit" name="direction" value="N">N</button>
+                            <a href="{{ path('directBoat', {'direction': 'N'}) }}"><button>N</button></a>
                         </div>
                         <div class="navigation-east-west">
-                            <button type="submit" name="direction" value="W">W</button>
-                            <button type="submit" name="direction" value="E">E</button>
+                            <a href="{{ path('directBoat', {'direction': 'W'}) }}"><button>W</button></a>
+                            <a href="{{ path('directBoat', {'direction': 'E'}) }}"><button>E</button></a>
                         </div>
                         <div class="navigation-commands">
-                            <button type="submit" name="direction" value="S">S</button>
+                            <a href="{{ path('directBoat', {'direction': 'S'}) }}"><button>S</button></a>
                         </div>
                 </div>
-                </form>
             </div>
         </div>
-    </div>
     </div>
 {% endblock %}

@@ -40,7 +40,7 @@ class MapManager
     {
         $tile = $this->tileRepository->findOneBy(['coordX' => $boat->getCoordX(), 'coordY' => $boat->getCoordY()]);
 
-        if (empty($tile) || $tile->getHasTreasure() === false) {
+        if (empty($tile) || !$tile->getHasTreasure()) {
             return false;
         }
 
