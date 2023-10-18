@@ -27,6 +27,7 @@ class AppFixtures extends Fixture
                 $tile->setType($type);
                 $tile->setCoordX($x);
                 $tile->setCoordY($y);
+                $tile->setHasTreasure(0);
                 $manager->persist($tile);
             }
         }

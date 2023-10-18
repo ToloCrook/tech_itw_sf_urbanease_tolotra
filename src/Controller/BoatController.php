@@ -44,13 +44,14 @@ class BoatController extends AbstractController
         $x = $boat->getCoordX();
         $y = $boat->getCoordY();
 
+//        Verify direction has been passed correctly
         if (empty($direction)) {
             $this->addFlash('warning', "It seems Jack's compass is broken... Please try to navigate again.");
 
             return $this->redirectToRoute('map');
         }
 
-//      If all verifications passed, run algorithm depending on the specified direction. Display appropriate flash message.
+//      Run algorithm depending on the specified direction. Display appropriate flash message.
         switch ($direction) {
             case 'S':
                 if ($mapManager->tileExists($x, $y + 1)) {
