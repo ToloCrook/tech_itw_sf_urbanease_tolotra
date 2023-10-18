@@ -87,15 +87,33 @@ blockquote {
     margin-top: 0.5em;
 }
 
+.infos {
+    font-family: Caribbean;
+}
+
 .navigation-commands {
     display: flex;
     flex-direction: column;
     width: 12%;
     margin: auto;
+    font-family: Caribbean;
 }
 
 .navigation-east-west {
     display: flex;
     justify-content: space-evenly;
+    font-family: Caribbean;
+}
+
+.buttons {
+    margin-top: 5em;
+    margin-left: 1em;
+}
+
+.alert {
+    font-family: Caribbean;
+    font-weight: bold;
+    background-color: transparent;
+    position: absolute;
 }
 
